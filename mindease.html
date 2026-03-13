@@ -1,0 +1,331 @@
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MindEase Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Quicksand&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body { font-family: 'Quicksand', sans-serif; background: #0b1c2d; margin: 0; color: #f8fafc; }
+.container { display: flex; }
+.sidebar { width: 250px; background: #13293d; padding: 20px; }
+.main-content { padding: 30px; flex: 1; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.card { background: #1e3a5f; padding: 20px; border-radius: 12px; cursor: pointer; text-align: center; }
+.section { display: none; margin-top: 30px; background: #1e3a5f; padding: 25px; border-radius: 15px; }
+input[type="text"], input[type="number"], select, textarea { width: 70%; padding: 10px; border-radius: 8px; border: none; margin-top: 10px; }
+textarea { resize: vertical; }
+button { margin-left: 10px; padding: 10px 15px; border-radius: 20px; border: none; background: #3b82f6; color: white; cursor: pointer; }
+ul { margin-top: 15px; padding-left: 20px; }
+li { margin: 8px 0; }
+.done label { text-decoration: line-through; color: #22c55e; }
+canvas { margin-top: 15px; background: white; border-radius: 10px; padding: 10px; }
+.insight, .avgSleep { margin-top: 10px; color: #93c5fd; font-weight: bold; }
+input.weekdayInput { width: 50px; margin-right: 5px; }
+</style>
+</head>
+
+<body>
+<div class="container">
+<aside class="sidebar">
+<h2>🍒 CherryTasks</h2>
+<ul>
+<li>Today's Tasks</li>
+<li>Weekly Goals</li>
+<li>Monthly Goals</li>
+<li>Personal / Self-Care</li>
+<li>Academic Analysis</li>
+<li>Weekly Sleep Tracker</li>
+<li>Daily Diary</li>
+<li>Mood Tracker</li>
+</ul>
+</aside>
+
+<main class="main-content">
+<h1>Hey There!!🍒</h1>
+
+<div class="card-grid">
+  <div class="card" onclick="openSection('today')">Today's Tasks</div>
+  <div class="card" onclick="openSection('weekly')">Weekly Goals</div>
+  <div class="card" onclick="openSection('monthly')">Monthly Goals</div>
+  <div class="card" onclick="openSection('personal')">Personal / Self-Care</div>
+  <div class="card" onclick="openSection('academic')">Academic Analysis</div>
+  <div class="card" onclick="openSection('sleepTracker')">Weekly Sleep Tracker</div>
+  <div class="card" onclick="openSection('journal')">Daily Diary</div>
+  <div class="card" onclick="openSection('moodTracker')">Mood Tracker</div>
+</div>
+
+<!-- TASKS -->
+<div class="section" id="today">
+<h2>📌 Today's Tasks</h2>
+<input id="todayInput" type="text" placeholder="Add a task">
+<button onclick="addTask('todayInput','todayList')">Add</button>
+<button onclick="markAllDone('todayList')">Mark All as Done</button>
+<ul id="todayList"></ul>
+</div>
+
+<div class="section" id="weekly">
+<h2>📅 Weekly Goals</h2>
+<input id="weeklyInput" type="text" placeholder="Add a goal">
+<button onclick="addTask('weeklyInput','weeklyList')">Add</button>
+<button onclick="markAllDone('weeklyList')">Mark All as Done</button>
+<ul id="weeklyList"></ul>
+</div>
+
+<div class="section" id="monthly">
+<h2>🗓 Monthly Goals</h2>
+<input id="monthlyInput" type="text" placeholder="Add a goal">
+<button onclick="addTask('monthlyInput','monthlyList')">Add</button>
+<button onclick="markAllDone('monthlyList')">Mark All as Done</button>
+<ul id="monthlyList"></ul>
+</div>
+
+<!-- PERSONAL / SELF-CARE -->
+<div class="section" id="personal">
+<h2>💖 Personal / Self-Care</h2>
+<p>💧 Water Intake</p>
+<input id="waterInput" type="number" placeholder="Glasses of water">
+<button onclick="addSelfCare('waterInput','waterChart','Hydration')">Add</button>
+<canvas id="waterChart" height="100"></canvas>
+
+<p>🧘 Self-Care Activity</p>
+<select id="selfcareInput">
+<option>Meditation</option>
+<option>Exercise</option>
+<option>Reading</option>
+<option>Relaxation</option>
+<option>Yoga</option>
+<option>Journaling</option>
+<option>Walking</option>
+<option>Music</option>
+<option>Hobby</option>
+<option>Other</option>
+</select>
+<input type="text" id="otherSelfCareInput" placeholder="Enter other activity" style="display:none; margin-top:5px; padding:5px; border-radius:5px; border:none;">
+<button onclick="addSelfCareActivity()">Add Activity</button>
+<canvas id="selfcareChart" height="100"></canvas>
+</div>
+
+<!-- ACADEMIC -->
+<div class="section" id="academic">
+<h2>📚 Academic Analysis</h2>
+<input id="subjectInput" type="text" placeholder="Subject Name">
+<input id="marksInput" type="number" placeholder="Marks out of 100">
+<button onclick="addAcademic()">Add</button>
+<canvas id="marksChart" height="100"></canvas>
+<div class="insight" id="marksInsight"></div>
+</div>
+
+<!-- WEEKLY SLEEP TRACKER -->
+<div class="section" id="sleepTracker">
+<h2>💤 Weekly Sleep Tracker</h2>
+<div>
+<label>Mon</label><input type="number" class="weekdayInput" id="mon" min="0" max="24"> 
+<label>Tue</label><input type="number" class="weekdayInput" id="tue" min="0" max="24"> 
+<label>Wed</label><input type="number" class="weekdayInput" id="wed" min="0" max="24"> 
+<label>Thu</label><input type="number" class="weekdayInput" id="thu" min="0" max="24"> 
+<label>Fri</label><input type="number" class="weekdayInput" id="fri" min="0" max="24"> 
+<label>Sat</label><input type="number" class="weekdayInput" id="sat" min="0" max="24"> 
+<label>Sun</label><input type="number" class="weekdayInput" id="sun" min="0" max="24">
+<button onclick="updateSleepChart()">Update</button>
+</div>
+<canvas id="sleepWeekChart" height="150"></canvas>
+<div class="avgSleep" id="avgSleepDisplay">Average Sleep Hours: 0</div>
+</div>
+
+<!-- DAILY DIARY -->
+<div class="section" id="journal">
+<h2>📔 Daily Diary</h2>
+<textarea id="journalInput" rows="5" placeholder="Write your diary entry here..."></textarea>
+<br>
+<button onclick="addJournalEntry()">Add Diary Entry</button>
+<ul id="journalList"></ul>
+</div>
+
+<!-- MOOD TRACKER -->
+<div class="section" id="moodTracker">
+<h2>😄 Mood Tracker</h2>
+<select id="moodInput">
+<option>Happy</option>
+<option>Neutral</option>
+<option>Sad</option>
+<option>Stressed</option>
+</select>
+<button onclick="addMood()">Add Mood</button>
+<canvas id="moodChart" height="100"></canvas>
+<div id="predictedMood" class="insight"></div>
+</div>
+
+</main>
+</div>
+
+<script>
+// --- SECTION NAVIGATION ---
+function openSection(id){
+  document.querySelectorAll(".section").forEach(s=>s.style.display="none");
+  let sec = document.getElementById(id);
+  if(sec) sec.style.display="block";
+}
+
+// --- TASKS ---
+function addTask(inputId,listId){
+  let input=document.getElementById(inputId);
+  if(input.value.trim()==="") return;
+  let li=document.createElement("li");
+  let checkbox=document.createElement("input"); checkbox.type="checkbox"; checkbox.style.marginRight="10px";
+  let label=document.createElement("label"); label.textContent=input.value;
+  checkbox.onchange=()=>{li.classList.toggle("done",checkbox.checked);}
+  li.appendChild(checkbox); li.appendChild(label);
+  document.getElementById(listId).appendChild(li);
+  input.value="";
+}
+function markAllDone(listId){
+  Array.from(document.getElementById(listId).children).forEach(li=>{
+    let checkbox=li.querySelector("input[type=checkbox]");
+    checkbox.checked=true; li.classList.add("done");
+  });
+}
+
+// --- CHARTS ---
+let waterChart = new Chart(document.getElementById('waterChart'),{
+    type:'line',
+    data:{labels:[],datasets:[{label:'Water Intake',data:[],backgroundColor:'rgba(59,130,246,0.2)',borderColor:'rgba(59,130,246,1)',borderWidth:1}]},
+    options:{scales:{y:{beginAtZero:true}}}
+});
+let selfcareChart = new Chart(document.getElementById('selfcareChart'),{
+    type:'pie',
+    data:{labels:[],datasets:[{label:'Activities',data:[],backgroundColor:['#3b82f6','#f59e0b','#10b981','#ef4444','#f97316','#8b5cf6','#ec4899','#22c55e','#f43f5e','#0ea5e9']}]}
+});
+let marksChart = new Chart(document.getElementById('marksChart'),{
+    type:'bar',
+    data:{labels:[],datasets:[{label:'Marks',data:[],backgroundColor:'rgba(59,130,246,0.7)',borderColor:'rgba(37,99,235,1)',borderWidth:1}]},
+    options:{scales:{y:{beginAtZero:true,max:100}}}
+});
+let sleepWeekChart = new Chart(document.getElementById('sleepWeekChart'), {
+    type: 'bar',
+    data: { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets: [{label:'Sleep Hours', data:[0,0,0,0,0,0,0], backgroundColor:'rgba(59,130,246,0.7)', borderColor:'rgba(37,99,235,1)', borderWidth:1}]},
+    options: { scales: { y: { beginAtZero:true, max:12 } } }
+});
+let moodChart = new Chart(document.getElementById('moodChart'), {
+    type: 'line',
+    data: { labels: [], datasets: [{label:'Mood', data:[], backgroundColor:'rgba(255,206,86,0.2)', borderColor:'rgba(255,206,86,1)', borderWidth:1}]},
+    options: { scales: { y: { beginAtZero:false, ticks:{callback: function(val){ const map={Happy:3,Neutral:2,Sad:1,Stressed:0}; return Object.keys(map).find(key=>map[key]===val); } } } } }
+});
+
+// --- SELF-CARE ---
+function addSelfCare(inputId, chartId,type){
+  let input=document.getElementById(inputId);
+  let value=input.tagName==="SELECT"? input.value : Number(input.value);
+  if(value==="") return;
+  if(type==='Self-Care'){
+    let idx=selfcareChart.data.labels.indexOf(value);
+    if(idx===-1){selfcareChart.data.labels.push(value); selfcareChart.data.datasets[0].data.push(1);}
+    else selfcareChart.data.datasets[0].data[idx]++;
+    selfcareChart.update();
+  } else if(type==='Hydration'){
+    waterChart.data.labels.push(new Date().toLocaleTimeString());
+    waterChart.data.datasets[0].data.push(value); waterChart.update();
+    if(value<8) alert("💧 Reminder: Drink water to reach your daily goal of 8 glasses!");
+  }
+  input.value="";
+}
+
+document.getElementById('selfcareInput').addEventListener('change', function(){
+    if(this.value === 'Other'){ document.getElementById('otherSelfCareInput').style.display = 'inline-block'; } 
+    else { document.getElementById('otherSelfCareInput').style.display = 'none'; }
+});
+
+function addSelfCareActivity(){
+    let select = document.getElementById('selfcareInput');
+    let activity = select.value === 'Other' ? document.getElementById('otherSelfCareInput').value.trim() : select.value;
+    if(activity === "") return;
+    let idx = selfcareChart.data.labels.indexOf(activity);
+    if(idx === -1){ selfcareChart.data.labels.push(activity); selfcareChart.data.datasets[0].data.push(1); }
+    else { selfcareChart.data.datasets[0].data[idx]++; }
+    selfcareChart.update();
+    if(select.value === 'Other') document.getElementById('otherSelfCareInput').value = '';
+}
+
+// --- ACADEMIC ---
+function addAcademic(){
+  let subject=document.getElementById('subjectInput').value;
+  let marks=Number(document.getElementById('marksInput').value);
+  if(subject==="" || marks==="") return;
+  marksChart.data.labels.push(subject);
+  marksChart.data.datasets[0].data.push(marks);
+  marksChart.update();
+  let insight="";
+  if(marks>=75) insight="🌟 Excellent performance";
+  else if(marks>=50) insight="👍 Average performance";
+  else insight="⚠ Needs improvement";
+  document.getElementById('marksInsight').innerText=insight;
+  document.getElementById('subjectInput').value="";
+  document.getElementById('marksInput').value="";
+}
+
+// --- SLEEP ---
+function updateSleepChart(){
+    let days = ['mon','tue','wed','thu','fri','sat','sun'];
+    let data = [], sum = 0, count = 0;
+    days.forEach(day => {
+        let val = Number(document.getElementById(day).value);
+        if(!isNaN(val) && val>0){ data.push(val); sum+=val; count++; } 
+        else data.push(0);
+    });
+    sleepWeekChart.data.datasets[0].data = data;
+    sleepWeekChart.update();
+    let avg = count>0 ? (sum/count).toFixed(2) : 0;
+    document.getElementById('avgSleepDisplay').innerText = "Average Sleep Hours: " + avg;
+    if(avg<8) alert("🛌 Reminder: Try to reach your sleep goal of 8 hours per day!");
+}
+
+// --- JOURNAL ---
+let journalEntries = [];
+function addJournalEntry(){
+    let text = document.getElementById('journalInput').value.trim();
+    if(text==="") return;
+    journalEntries.push({text:text, timestamp:new Date().toLocaleString()});
+    renderJournalEntries();
+    document.getElementById('journalInput').value='';
+}
+function renderJournalEntries(){
+    let list = document.getElementById('journalList'); list.innerHTML="";
+    journalEntries.forEach((entry,index)=>{
+        let li = document.createElement('li');
+        li.style.marginBottom='10px';
+        li.innerHTML = `<strong>${entry.timestamp}</strong>: ${entry.text} 
+                        <button onclick="editJournal(${index})">Edit</button>
+                        <button onclick="deleteJournal(${index})">Delete</button>`;
+        list.appendChild(li);
+    });
+}
+function editJournal(index){
+    let newText = prompt("Edit your diary entry:", journalEntries[index].text);
+    if(newText!==null && newText.trim()!==""){ journalEntries[index].text=newText.trim(); renderJournalEntries(); }
+}
+function deleteJournal(index){ journalEntries.splice(index,1); renderJournalEntries(); }
+
+// --- MOOD ---
+let moodHistory=[];
+function addMood(){
+    let mood = document.getElementById('moodInput').value;
+    moodHistory.push({mood:mood, date:new Date().toLocaleDateString()});
+    const map={Happy:3,Neutral:2,Sad:1,Stressed:0};
+    moodChart.data.labels.push(moodHistory[moodHistory.length-1].date);
+    moodChart.data.datasets[0].data.push(map[mood]);
+    moodChart.update();
+    predictMood();
+}
+function predictMood(){
+    if(moodHistory.length===0) return;
+    let last7=moodHistory.slice(-7); let freq={};
+    last7.forEach(m=>freq[m.mood]=(freq[m.mood]||0)+1);
+    let predicted=Object.keys(freq).reduce((a,b)=>freq[a]>=freq[b]?a:b);
+    document.getElementById('predictedMood').innerText="🤖 Predicted Mood Today: "+predicted;
+}
+</script>
+</body>
+</html>
+ 

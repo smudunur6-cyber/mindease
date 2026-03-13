@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CherryTasks Login</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#0b1c2d;
+  font-family: Arial, sans-serif;
+  color:#f8fafc;
+}
+
+.login-box{
+  background:#13293d;
+  padding:40px;
+  border-radius:15px;
+  text-align:center;
+  width:300px;
+}
+
+h2{ margin-bottom:10px; }
+
+input{
+  width:100%;
+  padding:10px;
+  margin-top:15px;
+  border:none;
+  border-radius:8px;
+}
+
+button{
+  margin-top:20px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:20px;
+  background:#3b82f6;
+  color:white;
+  cursor:pointer;
+}
+
+small{
+  display:block;
+  margin-top:10px;
+  color:#93c5fd;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+  <h2>🍒 CherryTasks</h2>
+  <p>Login to continue</p>
+  <input type="password" id="password" placeholder="Enter password">
+  <button onclick="login()">Login</button>
+  <small>Password: cherry123</small>
+</div>
+
+<script>
+function login(){
+  const password = document.getElementById("password").value;
+
+  if(password === "cherry123"){
+    window.location.href = "dashboard.html";
+  } else {
+    alert("❌ Incorrect password");
+  }
+}
+</script>
+
+</body>
+</html>
